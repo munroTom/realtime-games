@@ -6,7 +6,11 @@
     "module": "esnext",
     "jsx": "react",
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -16,7 +20,10 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "baseUrl": "src",
-    "allowJs": true
+    "allowJs": true,
+    "isolatedModules": true
   },
-  "include": ["./src/"]
+  "include": [
+    "./src/"
+  ]
 }
