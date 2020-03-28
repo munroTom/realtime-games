@@ -1,0 +1,50 @@
+import type { Deck, Users } from "../types";
+
+export function getImageFileNameFromLabel(label: string) {
+  const arr = label.split("-");
+
+  return `${getRank(arr[1])}${getSuit(arr[0])}`.toUpperCase();
+}
+
+function getSuit(suit: string) {
+  return suit.substring(0, 1);
+}
+
+function getRank(rank: string) {
+  if (rank === "1") {
+    return "A";
+  }
+  if (rank === "10") {
+    return "T";
+  }
+  if (rank === "11") {
+    return "J";
+  }
+  if (rank === "12") {
+    return "Q";
+  }
+  if (rank === "13") {
+    return "K";
+  }
+
+  return rank;
+}
+
+export function getMyUnplayedCards(deck: Deck, users: Users) {
+  const me = users.find(({ isMe }) => isMe);
+
+  const myUnplayedCards: Array<string> = Object.keys(deck).reduce(
+    (reduction, cardKey) => {
+      const card = deck[cardKey];
+      if (!card.played && card.user === me?.displayName) {
+        //@ts-ignore
+        reduction.push(cardKey);
+      }
+
+      return reduction;
+    },
+    []
+  );
+
+  return myUnplayedCards;
+}

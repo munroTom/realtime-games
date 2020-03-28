@@ -1,14 +1,13 @@
-const suites = ["hearts", "clubs", "diamonds", "spades"];
-const cardValues = new Array(13).fill(0).map((_, index) => index + 1);
+import type {Deck} from 'features/president/types'
 
-type Card = { user: string; played: boolean };
-type Deck = { [value: string]: Card };
+import { suits, ranks } from "../consts";
+
 
 export function initialiseDeck() {
   const deck: Deck = {};
-  suites.forEach(suite => {
-    cardValues.forEach(cardValue => {
-      deck[`${suite}-${cardValue}`] = { user: "", played: false };
+  suits.forEach(suit => {
+    ranks.forEach(rank => {
+      deck[`${suit}-${rank}`] = { user: "", played: false };
     });
   });
 
