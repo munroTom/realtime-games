@@ -1,0 +1,14 @@
+.card {
+  display: flex;
+  height: 150px;
+}
+
+.wrapper {
+  display: flex;
+  position: relative;
+}
+
+.cardWrapper {
+  position: absolute;
+  transition: top ease-in 0.2s;
+}

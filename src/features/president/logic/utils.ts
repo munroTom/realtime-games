@@ -46,5 +46,12 @@ export function getMyUnplayedCards(deck: Deck, users: Users) {
     []
   );
 
-  return myUnplayedCards;
+  const sortedCards = myUnplayedCards.sort((cardOne,cardTwo)=>{
+    const rankOne = cardOne.split('-')[1]
+    const rankTwo = cardTwo.split('-')[1]
+
+    return Number(rankOne) -Number(rankTwo)
+  })
+
+  return sortedCards;
 }

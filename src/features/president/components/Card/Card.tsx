@@ -2,10 +2,17 @@ import React from "react";
 
 import { getImageFileNameFromLabel } from "features/president/logic/utils";
 
-export default function Card() {
-  const card = getImageFileNameFromLabel("hearts-13");
-  console.log(card);
-  return <img src={require(`assets/cards/${card}.svg`)} alt={card} />;
+type Props = { label: string; className: string };
+
+export default function Card({ label, className }: Props) {
+  const card = getImageFileNameFromLabel(label);
+  return (
+    <img
+      src={require(`assets/cards/${card}.svg`)}
+      alt={card}
+      className={className}
+    />
+  );
 }
 
 export function CardBack() {
