@@ -1,9 +1,15 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
 .card {
   display: flex;
   height: 150px;
 }
 
-.wrapper {
+.cardsWrapper {
   display: flex;
   position: relative;
 }
@@ -11,4 +17,9 @@
 .cardWrapper {
   position: absolute;
   transition: top ease-in 0.2s;
+}
+
+.button {
+  width: 80px;
+  margin-bottom: 30px;
 }

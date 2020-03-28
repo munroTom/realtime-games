@@ -1,0 +1,35 @@
+.wrapper {
+  // position: relative;
+  display: flex;
+  padding: 50px;
+  height: 150px;
+  width: 150px;
+  // flex-direction: column;
+}
+
+.card {
+  display: flex;
+  height: 150px;
+}
+
+.cardWrapper {
+  transition: transform ease 1s;
+
+  animation: animatein 2s;
+}
+
+.button {
+  width: 80px;
+  margin-bottom: 30px;
+}
+
+@keyframes animatein {
+  0% {
+    opacity: 0;
+    transform: translateX(1000px) rotate(300deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px) rotate(20deg);
+  }
+}

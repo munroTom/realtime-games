@@ -30,7 +30,12 @@ function getRank(rank: string) {
   return rank;
 }
 
-export function getMyUnplayedCards(deck: Deck, users: Users) {
+export function getMyUnplayedCards(deck: Deck| null, users: Users) {
+
+  if(!deck){
+    return null
+  }
+  
   const me = users.find(({ isMe }) => isMe);
 
   const myUnplayedCards: Array<string> = Object.keys(deck).reduce(
