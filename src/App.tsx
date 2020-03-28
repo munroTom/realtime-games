@@ -1,8 +1,12 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
 
-function App() {
+import dealDeck from "features/president/features/deal";
+
+import logo from "./logo.svg";
+import "./App.css";
+
+export default function App() {
+  dealDeck(["1", "2", "3"]);
   return (
     <div className="App">
       <header className="App-header">
@@ -22,5 +26,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
