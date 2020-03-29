@@ -4,6 +4,7 @@ import { useFirebase } from "features/firebase";
 
 import Card from "../Card";
 
+import { validateCardsPlayed } from "./utils";
 import styles from "./Hand.module.scss";
 
 type Props = { cards: Array<string> | null };
@@ -14,7 +15,8 @@ export default function Hand({ cards }: Props) {
     [card: string]: boolean;
   }>({});
   const [counter, setCounter] = useState(0);
-  const [playedCards, setPlayedCards] = useState<Array<any>>([]);
+  const [trickType, setTrickType] = useState(null);
+  const [playedCards, setPlayedCards] = useState<Array<string>>([]);
 
   const toggleCardSelected = (card: string) => {
     const mutableCards = { ...selectedCards };
@@ -28,18 +30,30 @@ export default function Hand({ cards }: Props) {
 
   const playCards = () => {
     const cardsPlayed = Object.keys(selectedCards);
-    firebase.playSelectedCards({
-      roundId: "1",
-      trickId: "1",
-      selectedCards: cardsPlayed
-    });
-    setSelectedCards({});
+    if (
+      validateCardsPlayed({
+        playedCards,
+        cardsToPlay: cardsPlayed,
+        trickType
+      })
+    ) {
+      firebase.playSelectedCards({
+        roundId: "1",
+        trickId: "1",
+        selectedCards: cardsPlayed
+      });
+      setSelectedCards({});
+    } else {
+    }
   };
 
   firebase.addTrickListener(setCounter);
 
   useEffect(() => {
     setPlayedCards(firebase.getState().trick.cardsPlayed);
+    if (!trickType) {
+      setTrickType(firebase.getState().trick.type);
+    }
   }, [counter]);
 
   return (

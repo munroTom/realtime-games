@@ -6,6 +6,12 @@ export function getImageFileNameFromLabel(label: string) {
   return `${getRank(arr[1])}${getSuit(arr[0])}`.toUpperCase();
 }
 
+export function getCardRank(label:string){
+  const arr = label.split("-");
+
+  return Number(arr[1]);
+}
+
 function getSuit(suit: string) {
   return suit.substring(0, 1);
 }

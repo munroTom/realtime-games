@@ -18,8 +18,9 @@ class Firebase {
     this.db = app.database();
     this.state = {
       fetch: { currentRound: false, currentTrick: false },
+      game: { currentPlayer: null },
       round: { cards: null },
-      trick: { cardsPlayed: [], usersPassed: null, counter: 0 }
+      trick: { cardsPlayed: [], usersPassed: null, counter: 0, type: null }
     };
     this.listeners = [];
   }
@@ -69,7 +70,8 @@ class Firebase {
     });
     updates[`tricks/${trickId}`] = {
       cardsPlayed: [...this.state.trick.cardsPlayed, ...selectedCards],
-      trickCounter: this.state.trick.counter++
+      trickCounter: this.state.trick.counter++,
+      type: selectedCards.length
     };
 
     this.state.trick.cardsPlayed = [
@@ -77,6 +79,7 @@ class Firebase {
       ...selectedCards
     ];
     this.state.trick.counter++;
+    this.state.trick.type = selectedCards.length;
 
     if (this.listeners.length) {
       this.listeners.forEach(callback => callback(this.state.trick.counter));
