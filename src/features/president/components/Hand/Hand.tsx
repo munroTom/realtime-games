@@ -82,6 +82,7 @@ export default function Hand({ cards }: Props) {
                   top: getTopStyle(isSelected, isPlayed)
                 }}
                 onClick={() => toggleCardSelected(card)}
+                key={card}
               >
                 <Card label={card} className={styles.card} />
               </div>

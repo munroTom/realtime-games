@@ -34,11 +34,10 @@ class Firebase {
     };
     this.listeners = [];
 
-    this.user = new User({ fireAuth: this.auth, initState: this.state.user });
-
-    this.user.login({
-      email: "test@test.com",
-      password: "test123"
+    this.user = new User({
+      fireAuth: this.auth,
+      initState: this.state.user,
+      db: this.db
     });
   }
 

@@ -5,11 +5,12 @@ import PageLayout from "features/layout/PageLayout";
 
 import PathEndsWithRoute from "features/components/PathEndsWithRoute";
 import LoginForm from "features/auth/components/LoginForm";
+import SignUpForm from "features/auth/components/SignUpForm";
 
 import { linkToHomePage } from "./links";
 import { linkToPresident } from "./president/links";
 import PresidentRoute from "./president/Route";
-import { linkToLogIn } from "./globalLinks";
+import { linkToLogIn, linkToSignUp } from "./globalLinks";
 
 export default function Routes() {
   return (
@@ -17,6 +18,9 @@ export default function Routes() {
       <>
         <PathEndsWithRoute path={linkToLogIn()}>
           <LoginForm />
+        </PathEndsWithRoute>
+        <PathEndsWithRoute path={linkToSignUp()}>
+          <SignUpForm />
         </PathEndsWithRoute>
         <Switch>
           <Route path={linkToPresident()}>

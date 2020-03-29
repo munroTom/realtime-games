@@ -8,22 +8,29 @@ import useEffectIfPropChanges from "utils/hooks/useEffectIfPropChanges";
 import useIsSignedIn from "features/auth/hooks/useIsSignedIn";
 
 import FormTemplate from "../FormTemplate";
+import useEffectOnMount from "utils/hooks/useEffectOnMount";
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   useRedirectOnSignInSuccess();
 
   const firebase = useFirebase();
-  const onSignInClick = async () => {
-    const errorMessage = await firebase.user.login({ email, password });
+  const onSignUpClick = async () => {
+    const errorMessage = await firebase.user.signUp({
+      email,
+      password,
+      displayName
+    });
     setErrorMessage(errorMessage);
   };
+
   const onSecondaryClick = useOnSecondaryClick();
   return (
     <FormTemplate
-      title="Login"
+      title={"Sign Up"}
       fields={[
         { label: "Email", type: "email", value: email, setValue: setEmail },
         {
@@ -31,11 +38,17 @@ export default function LoginForm() {
           type: "password",
           value: password,
           setValue: setPassword
+        },
+        {
+          label: "Display Name",
+          type: "displayName",
+          value: displayName,
+          setValue: setDisplayName
         }
       ]}
-      onClick={onSignInClick}
+      onClick={onSignUpClick}
       errorMessage={errorMessage}
-      secondaryText="Sign up"
+      secondaryText="Login"
       onSecondaryClick={onSecondaryClick}
     />
   );
@@ -45,8 +58,8 @@ function useOnSecondaryClick() {
   const history = useHistory();
   const location = useLocation();
 
-  const withoutSignIn = location.pathname.replace(linkToLogIn(), "");
-  return () => history.push(withoutSignIn + linkToSignUp());
+  const withoutSignIn = location.pathname.replace(linkToSignUp(), "");
+  return () => history.push(withoutSignIn + linkToLogIn());
 }
 
 function useRedirectOnSignInSuccess() {
@@ -54,10 +67,19 @@ function useRedirectOnSignInSuccess() {
   const history = useHistory();
   const location = useLocation();
 
-  const withoutSignIn = location.pathname.replace(linkToLogIn(), "");
+  const withoutSignUp = location.pathname.replace(linkToSignUp(), "");
+
+  useEffectOnMount(() => {
+    if (signedIn) {
+      console.log("redirecting");
+      history.replace(withoutSignUp);
+    }
+  });
   useEffectIfPropChanges(() => {
     if (signedIn) {
-      history.replace(withoutSignIn);
+      console.log("redirecting");
+
+      history.replace(withoutSignUp);
     }
   }, signedIn);
 }

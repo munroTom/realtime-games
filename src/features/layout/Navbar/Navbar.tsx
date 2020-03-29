@@ -12,7 +12,7 @@ export default function Navbar({ pages }: Props) {
     <div className={styles.wrapper}>
       {pages.map(({ name, link }) => {
         return (
-          <NavLink to={link} className={styles.link}>
+          <NavLink to={link} className={styles.link} key={link}>
             {name}
           </NavLink>
         );

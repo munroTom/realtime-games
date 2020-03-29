@@ -13,7 +13,10 @@ export default function Players({users}:Props) {
   return (
     <div className={styles.wrapper}>
       {users.map((user) => (
+        <React.Fragment key={user.displayName}>
+
         <Player {...user} />
+        </React.Fragment>
       ))}
     </div>
   );
