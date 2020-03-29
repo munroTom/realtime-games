@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
+import useEffectIfPropChanges from "utils/hooks/useEffectIfPropChanges";
 import { useFirebase } from "features/firebase";
 
 import Card from "../Card";
@@ -49,12 +50,12 @@ export default function Hand({ cards }: Props) {
 
   firebase.addTrickListener(setCounter);
 
-  useEffect(() => {
+  useEffectIfPropChanges(() => {
     setPlayedCards(firebase.getState().trick.cardsPlayed);
     if (!trickType) {
       setTrickType(firebase.getState().trick.type);
     }
-  }, [counter]);
+  }, counter);
 
   return (
     <div className={styles.wrapper}>

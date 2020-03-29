@@ -1,7 +1,8 @@
-import app from "firebase/app";
+import * as firebase from "firebase";
 import "firebase/database";
 
 import config from "config.json";
+import User from "./User";
 
 type PlaySelectedCards = {
   roundId: string;
@@ -12,17 +13,33 @@ class Firebase {
   db: any;
   state: any;
   listeners: Array<any>;
-  constructor() {
-    app.initializeApp(config.firebaseConfig);
+  user: User;
+  auth: firebase.auth.Auth;
 
-    this.db = app.database();
+  constructor() {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(config.firebaseConfig);
+    }
+
+    this.db = firebase.database();
+    this.auth = firebase.auth();
     this.state = {
+      user: {
+        signedIn: false
+      },
       fetch: { currentRound: false, currentTrick: false },
       game: { currentPlayer: null },
       round: { cards: null },
       trick: { cardsPlayed: [], usersPassed: null, counter: 0, type: null }
     };
     this.listeners = [];
+
+    this.user = new User({ fireAuth: this.auth, initState: this.state.user });
+
+    this.user.login({
+      email: "test@test.com",
+      password: "test123"
+    });
   }
 
   round(roundId: string) {

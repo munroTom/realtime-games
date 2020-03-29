@@ -1,7 +1,17 @@
+const signUpEnding = "/signUp";
 export function linkToSignUp() {
-  return `${window.location.pathname}/signUp`;
+  return signUpEnding;
 }
 
+export function globalLinkToSignUp() {
+  return `${window.location.pathname}${signUpEnding}`;
+}
+
+const loginEnding = "/login";
 export function linkToLogIn() {
-  return `${window.location.pathname}/login`;
+  return loginEnding;
+}
+
+export function globalLinkToLogin() {
+  return `${window.location.pathname}${loginEnding}`;
 }
