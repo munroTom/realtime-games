@@ -9,8 +9,8 @@ import useIsSignedIn from "features/auth/hooks/useIsSignedIn";
 
 import FormTemplate from "../FormTemplate";
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("tom@email.com");
+  const [password, setPassword] = useState("12345678a");
   const [errorMessage, setErrorMessage] = useState("");
 
   useRedirectOnSignInSuccess();

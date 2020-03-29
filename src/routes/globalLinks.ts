@@ -4,7 +4,7 @@ export function linkToSignUp() {
 }
 
 export function globalLinkToSignUp() {
-  return `${window.location.pathname}${signUpEnding}`;
+  return `${replaceLastSlashFromWindow()}${signUpEnding}`;
 }
 
 const loginEnding = "/login";
@@ -13,5 +13,14 @@ export function linkToLogIn() {
 }
 
 export function globalLinkToLogin() {
-  return `${window.location.pathname}${loginEnding}`;
+  return `${replaceLastSlashFromWindow()}${loginEnding}`;
+}
+
+function replaceLastSlashFromWindow() {
+  const path = window.location.pathname;
+  if (path.endsWith("/")) {
+    return path.substring(0, path.length - 1);
+  }
+
+  return path;
 }

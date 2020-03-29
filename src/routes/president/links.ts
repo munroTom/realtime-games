@@ -4,6 +4,6 @@ export function linkToPresident() {
   return `${linkToHomePage()}/president`;
 }
 
-export function linkToPresidentGame(gameId: string) {
+export function linkToPresidentGame(gameId: string = ":gameId") {
   return `${linkToPresident()}/${gameId}`;
 }

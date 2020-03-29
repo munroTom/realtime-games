@@ -3,6 +3,7 @@ import "firebase/database";
 
 import config from "config.json";
 import User from "./User";
+import Game from "./Game";
 
 type PlaySelectedCards = {
   roundId: string;
@@ -15,6 +16,7 @@ class Firebase {
   listeners: Array<any>;
   user: User;
   auth: firebase.auth.Auth;
+  game: Game;
 
   constructor() {
     if (!firebase.apps.length) {
@@ -28,7 +30,6 @@ class Firebase {
         signedIn: false
       },
       fetch: { currentRound: false, currentTrick: false },
-      game: { currentPlayer: null },
       round: { cards: null },
       trick: { cardsPlayed: [], usersPassed: null, counter: 0, type: null }
     };
@@ -38,6 +39,11 @@ class Firebase {
       fireAuth: this.auth,
       initState: this.state.user,
       db: this.db
+    });
+
+    this.game = new Game({
+      db: this.db,
+      user: this.user
     });
   }
 
@@ -75,6 +81,14 @@ class Firebase {
     return this.state.fetch.currentTrick;
   }
 
+  async listenForCardsBeingPlayed(trickId: string) {
+    const trickCounterRef = this.db.ref(`tricks/${trickId}/trickCounter`);
+    trickCounterRef.on("value", (snapshot: any) => {
+      console.log(snapshot.val());
+      console.log(this.state);
+    });
+  }
+
   async playSelectedCards({
     roundId,
     selectedCards,
@@ -101,7 +115,7 @@ class Firebase {
       this.listeners.forEach(callback => callback(this.state.trick.counter));
     }
 
-    // this.db.ref().update(updates);
+    this.db.ref().update(updates);
   }
 
   addTrickListener(callback: (number: number) => void) {

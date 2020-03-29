@@ -1,12 +1,8 @@
-type State =
-  | {
-      signedIn: false;
-    }
-  | {
-      signedIn: true;
-      userId: string;
-      displayName: string;
-    };
+type State = {
+  signedIn: boolean;
+  userId: string | null;
+  displayName: string | null;
+};
 
 type Auth = any;
 
@@ -27,6 +23,10 @@ class User {
     this.db = db;
   }
 
+  getState() {
+    return this.state;
+  }
+
   async login({ email, password }: Login) {
     try {
       await this.auth.signInWithEmailAndPassword(email, password);
@@ -40,7 +40,9 @@ class User {
         displayName
       };
 
-      this.callSignedInListeners(true);
+      console.log(this.state);
+
+      this.callSignedInListeners();
       return "";
     } catch (e) {
       return e.message;
@@ -58,16 +60,27 @@ class User {
 
       this.state = {
         signedIn: true,
-        userId: "",
+        userId,
         displayName
       };
 
-      this.callSignedInListeners(true);
+      this.callSignedInListeners();
 
       return "";
     } catch (e) {
       return e.message;
     }
+  }
+
+  async logout() {
+    await this.auth.signOut();
+    this.state = {
+      signedIn: false,
+      userId: null,
+      displayName: null
+    };
+
+    this.callSignedInListeners();
   }
 
   addSignedInListener(callback: (signedIn: boolean) => void) {
@@ -76,7 +89,8 @@ class User {
     callback(this.state.signedIn);
   }
 
-  callSignedInListeners(signedIn: boolean) {
+  callSignedInListeners() {
+    const signedIn = this.getState().signedIn;
     this.signedInListeners.forEach(c => c(signedIn));
   }
 }
