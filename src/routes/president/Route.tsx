@@ -12,7 +12,7 @@ export default function PresidentRoute() {
         <Route path={linkToPresidentGame()}>
           <PresidentGame />
         </Route>
-        <Route path={linkToPresident()} exact>
+        <Route path={linkToPresident()}>
           <PresidentHomepage linkToGame={linkToPresidentGame} />
         </Route>
 
