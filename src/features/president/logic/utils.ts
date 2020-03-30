@@ -1,4 +1,4 @@
-import type { Deck, Users } from "../types";
+import type { Deck } from "../types";
 
 export function getImageFileNameFromLabel(label: string) {
   const arr = label.split("-");
@@ -8,8 +8,17 @@ export function getImageFileNameFromLabel(label: string) {
 
 export function getCardRank(label:string){
   const arr = label.split("-");
+  const rank = arr[1]
 
-  return Number(arr[1]);
+  return Number(setAceHigh(rank));
+}
+
+function setAceHigh(rank:string){
+  if(rank ==='1'){
+    return '14'
+  }
+
+  return rank
 }
 
 function getSuit(suit: string) {
@@ -36,18 +45,17 @@ function getRank(rank: string) {
   return rank;
 }
 
-export function getMyUnplayedCards(deck: Deck| null, users: Users) {
+export function getMyUnplayedCards(deck: Deck| null, userId:string) {
 
   if(!deck){
     return null
   }
   
-  const me = users.find(({ isMe }) => isMe);
 
   const myUnplayedCards: Array<string> = Object.keys(deck).reduce(
     (reduction, cardKey) => {
       const card = deck[cardKey];
-      if (!card.played && card.user === me?.displayName) {
+      if (!card.played && card.user === userId) {
         //@ts-ignore
         reduction.push(cardKey);
       }
@@ -58,10 +66,9 @@ export function getMyUnplayedCards(deck: Deck| null, users: Users) {
   );
 
   const sortedCards = myUnplayedCards.sort((cardOne,cardTwo)=>{
-    const rankOne = cardOne.split('-')[1]
-    const rankTwo = cardTwo.split('-')[1]
 
-    return Number(rankOne) -Number(rankTwo)
+
+    return getCardRank(cardOne) -getCardRank(cardTwo)
   })
 
   return sortedCards;
