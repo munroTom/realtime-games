@@ -8,14 +8,9 @@ import Card from "../Card";
 import styles from "./CardsPlayed.module.scss";
 
 export default function CardsPlayed() {
-  const [counter, setCounter] = useState(0);
-  const [cardsPlayed, setCardsPlayed] = useState([]);
+  const [cardsPlayed, setCardsPlayed] = useState<Array<string>>([]);
   const firebase = useFirebase();
-  firebase.addTrickListener(setCounter);
-
-  useEffectIfPropChanges(() => {
-    setCardsPlayed(firebase.getState().trick.cardsPlayed);
-  }, counter);
+  firebase.trick.addCardsPlayedListener(setCardsPlayed);
 
   return (
     <div className={styles.wrapper}>

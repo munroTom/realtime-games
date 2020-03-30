@@ -7,17 +7,26 @@ import Card from "../Card";
 
 import { validateCardsPlayed } from "./utils";
 import styles from "./Hand.module.scss";
+import useEffectOnMount from "utils/hooks/useEffectOnMount";
+import useIsSignedIn from "features/auth/hooks/useIsSignedIn";
 
-type Props = { cards: Array<string> | null };
-
-export default function Hand({ cards }: Props) {
+export default function Hand() {
   const firebase = useFirebase();
+  const signedIn = useIsSignedIn();
   const [selectedCards, setSelectedCards] = useState<{
     [card: string]: boolean;
   }>({});
   const [counter, setCounter] = useState(0);
   const [trickType, setTrickType] = useState(null);
   const [playedCards, setPlayedCards] = useState<Array<string>>([]);
+  const [cards, setCards] = useState<Array<string>>([]);
+
+  useEffectIfPropChanges(async () => {
+    const unplayed = await firebase.round.getMyUnplayedCards();
+    if (unplayed) {
+      setCards(unplayed);
+    }
+  }, signedIn);
 
   const toggleCardSelected = (card: string) => {
     const mutableCards = { ...selectedCards };
@@ -38,9 +47,7 @@ export default function Hand({ cards }: Props) {
         trickType
       })
     ) {
-      firebase.playSelectedCards({
-        roundId: "1",
-        trickId: "1",
+      firebase.trick.playSelectedCards({
         selectedCards: cardsPlayed
       });
       setSelectedCards({});

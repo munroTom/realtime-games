@@ -18,11 +18,18 @@ export default function President() {
   const [counter, setCounter] = useState(0);
   const firebase = useFirebase();
   firebase.game.addPlayerJoinListener(setCounter);
+  const [currentRound, setCurrentRound] = useState("");
+  const [showStarter, setShowStarter] = useState(true);
+  firebase.game.addCurrentRoundListener(setCurrentRound);
   const signedIn = useIsSignedIn();
 
   const gameId = useGameId();
 
   const [users, setUsers] = useState<Users>([]);
+
+  useEffectIfPropChanges(() => {
+    setShowStarter(false);
+  }, currentRound);
 
   useEffectIfPropChanges(() => {
     const { players, currentPlayer } = firebase.game.getState();
@@ -37,14 +44,15 @@ export default function President() {
       });
       setUsers(users);
     }
+
+    firebase.round.listenForCurrentTrickChanges();
   }, counter);
 
   useEffectIfPropChanges(() => {
     firebase.game.joinGameIfNecessary(gameId);
   }, signedIn);
 
-  useEffectOnMount(() => {
-    console.log("joining");
+  useEffectOnMount(async () => {
     const {
       players,
       currentPlayer,
@@ -53,7 +61,7 @@ export default function President() {
     const { userId } = firebase.user.getState();
 
     if (!gameIdS) {
-      firebase.game.joinGameIfNecessary(gameId);
+      await firebase.game.joinGameIfNecessary(gameId);
     } else if (players) {
       const users = Object.keys(players).map(currentUserId => {
         return {
@@ -64,31 +72,32 @@ export default function President() {
       });
       setUsers(users);
     }
+
+    firebase.round.listenForCurrentTrickChanges();
   });
-
-  // const [fetched, setFetched] = useState(false);
-  // const [deck, setDeck] = useState(null);
-  // const [cardsPlayed,setCardsPlayed] = useState(null)
-  const deck = dealDeck(users.map(({ displayName }) => displayName));
-
-  // useEffectOnMount(async () => {
-  //   const roundFetchSucceeded = await firebase.getCurrentRound("1");
-  //   const trickFetchSucceeded = await firebase.getCurrentTrick("1");
-  //   setFetched(roundFetchSucceeded && trickFetchSucceeded);
-  // });
-
-  // useEffect(() => {
-  //   setDeck(firebase.getState().round.cards);
-  //   set
-  // }, [fetched]);
-
-  const myCards = getMyUnplayedCards(deck, users);
 
   return (
     <div>
       <Players users={users} />
-      <CardsPlayed />
-      <Hand cards={myCards} />
+      {showStarter ? <Starter /> : <CardsPlayed />}
+
+      <Hand />
     </div>
   );
+}
+
+function Starter() {
+  const firebase = useFirebase();
+
+  const startRound = async () => {
+    await firebase.trick.startRound();
+  };
+
+  return <StartNewRound onClick={startRound} />;
+}
+
+type SProps = { onClick: () => void };
+
+function StartNewRound({ onClick }: SProps) {
+  return <button onClick={onClick}>Start Round!</button>;
 }

@@ -4,6 +4,8 @@ import "firebase/database";
 import config from "config.json";
 import User from "./User";
 import Game from "./Game";
+import Round from "./Round";
+import Trick from "./Trick";
 
 type PlaySelectedCards = {
   roundId: string;
@@ -17,6 +19,8 @@ class Firebase {
   user: User;
   auth: firebase.auth.Auth;
   game: Game;
+  round: Round;
+  trick: Trick;
 
   constructor() {
     if (!firebase.apps.length) {
@@ -35,6 +39,8 @@ class Firebase {
     };
     this.listeners = [];
 
+    console.log("instantiating");
+
     this.user = new User({
       fireAuth: this.auth,
       initState: this.state.user,
@@ -45,77 +51,19 @@ class Firebase {
       db: this.db,
       user: this.user
     });
-  }
 
-  round(roundId: string) {
-    const round = this.db.ref(`rounds/${roundId}`);
-
-    return round;
-  }
-
-  dealCards(roundId: string, deck: any) {
-    this.db.ref(`rounds/${roundId}/cards`).set(deck);
-  }
-
-  async getCurrentRound(roundId: string) {
-    this.state.fetchCurrentRound = { started: true };
-    try {
-      const roundV = await this.db.ref(`rounds/${roundId}`).once("value");
-      this.state.round = roundV.val();
-
-      this.state.fetch.currentRound = true;
-    } catch (e) {}
-
-    return this.state.fetch.currentRound;
-  }
-
-  async getCurrentTrick(trickId: string) {
-    this.state.fetchCurrentTrick = { started: true };
-    try {
-      const trickV = await this.db.ref(`tricks/${trickId}`).once("values");
-      this.state.trick = trickV.val();
-
-      this.state.fetch.currentTrick = true;
-    } catch (e) {}
-
-    return this.state.fetch.currentTrick;
-  }
-
-  async listenForCardsBeingPlayed(trickId: string) {
-    const trickCounterRef = this.db.ref(`tricks/${trickId}/trickCounter`);
-    trickCounterRef.on("value", (snapshot: any) => {
-      console.log(snapshot.val());
-      console.log(this.state);
+    this.round = new Round({
+      db: this.db,
+      user: this.user,
+      game: this.game
     });
-  }
 
-  async playSelectedCards({
-    roundId,
-    selectedCards,
-    trickId
-  }: PlaySelectedCards) {
-    var updates: { [upd: string]: any } = {};
-    selectedCards.forEach(card => {
-      updates[`rounds/${roundId}/cards/${card}/played`] = true;
+    this.trick = new Trick({
+      db: this.db,
+      user: this.user,
+      game: this.game,
+      round: this.round
     });
-    updates[`tricks/${trickId}`] = {
-      cardsPlayed: [...this.state.trick.cardsPlayed, ...selectedCards],
-      trickCounter: this.state.trick.counter++,
-      type: selectedCards.length
-    };
-
-    this.state.trick.cardsPlayed = [
-      ...this.state.trick.cardsPlayed,
-      ...selectedCards
-    ];
-    this.state.trick.counter++;
-    this.state.trick.type = selectedCards.length;
-
-    if (this.listeners.length) {
-      this.listeners.forEach(callback => callback(this.state.trick.counter));
-    }
-
-    this.db.ref().update(updates);
   }
 
   addTrickListener(callback: (number: number) => void) {
